@@ -1,0 +1,102 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- ====================================================================== 
+     Jul 16, 2013 7:23:04 AM                                                        
+             
+     SynapticShock                                                                
+     ====================================================================== -->
+<project name="Synaptic Sync" default="build">
+
+	<property file="build.properties" prefix="build" />
+	<property file="version.properties" prefix="version" />
+	<property file="${build.forge}\\forgeversion.properties" prefix="forge.version" />
+	<property file="${build.mcp.src}\\fmlversion.properties" prefix="fml.version" />
+
+	<property name="forge.version.compact" value="${forge.version.forge.major.number}.${forge.version.forge.minor.number}.${forge.version.forge.revision.number}.${forge.version.forge.build.number}" />
+
+
+	<target name="clean">
+		<delete dir="${build.mcp.src}\mod_src" includeemptydirs="true" />
+		<delete dir="${build.mcp.reobf}" includeemptydirs="true" />
+	</target>
+
+	<target name="prep">
+		<antcall target="merge src" />
+		<antcall target="replace tokens" />
+	</target>
+
+	<target name="merge src" depends="clean">
+		<echo level="info" message="Merging source with MCP decompile" />
+		<copy todir="${build.mcp.src.target}">
+			<fileset dir="src" />
+			<fileset file="mcmod.info" />
+		</copy>
+	</target>
+
+	<target name="replace tokens">
+		<replace dir="${build.mcp.src.target}" token="@MODID@" value="${build.mod.modid}" summary="true" />
+		<replace dir="${build.mcp.src.target}" token="@VERSION@" value="${version.compact}" summary="true" />
+		<replace dir="${build.mcp.src.target}" token="@MODNAME@" value="${build.mod.name}" summary="true" />
+	</target>
+
+	<target name="recompile">
+		<echo level="info" message="MCP: Running Recompile" />
+		<exec dir="${build.mcp}" executable="cmd">
+			<arg line="${build.recompile}" />
+		</exec>
+	</target>
+
+	<target name="reobfuscate">
+		<echo level="info" message="MCP: Running Reobfuscate" />
+		<exec dir="${build.mcp}" executable="cmd">
+			<arg line="${build.reobfuscate}" />
+		</exec>
+	</target>
+
+
+	<target name="package jar">
+		<buildnumber />
+		<property name="target.jar" value="${build.mod.name.compact}-${version.compact}build${build.number}.jar" />
+		<jar destfile="${target.jar}">
+			<fileset dir="${build.mcp.reobf}" />
+			<filename name="${build.mcp.src.target}/mcmod.info" />
+			<filename name="${eclipse.workspace_loc}/libraries/mysql-connector-java-*-bin.jar" />
+		</jar>
+
+		<move todir="${eclipse.workspace_loc}/build-archive/${build.mod.name.compact}/">
+			<fileset dir="." includes="*.jar" />
+		</move>
+	</target>
+
+	<target name="push to server" depends="package jar">
+		<input addproperty="user" message="Enter User: " />
+		<input addproperty="password" message="Enter Password: " />
+		<sshexec host="98.203.179.236" username="${user}" password="${password}" trust="true" 
+			command="service minecraft stop test_server; rm -f ~/minecraft_server/live_server/mods/SynapticSync*.jar; service minecraft start test_server" />
+		<scp file="${eclipse.workspace_loc}/build-archive/${build.mod.name.compact}/${target.jar}" todir="mgmt@98.203.179.236:~/minecraft_server/live_server/mods/" trust="true" password="${password}" />
+	</target>
+
+	<target name="deploy">
+		<!-- Prep the build environment -->
+		<antcall target="prep" />
+
+		<!-- Run the source through MCP -->
+		<antcall target="recompile" />
+		<antcall target="reobfuscate" />
+
+		<!-- Build the Jar -->
+		<antcall target="push to server" />
+	</target>
+
+	<target name="build">
+		<!-- Prep the build environment -->
+		<antcall target="prep" />
+
+		<!-- Run the source through MCP -->
+		<antcall target="recompile" />
+		<antcall target="reobfuscate" />
+
+		<!-- Build the Jar -->
+		<antcall target="package jar" />
+	</target>
+
+</project>

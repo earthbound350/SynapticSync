@@ -1,0 +1,18 @@
+[
+{
+	"modid": "@MODID@",
+	"name": "@MODNAME@",
+	"description": "Syncs mod information with the Synaptic Server",
+	"version": "@VERSION@",
+	"credits": "",
+	"authors": ["SynapticShock"],
+	"logoFile": "",
+	"url": "",
+	"updateUrl": "",
+	"screenshots": [],
+	"parent":"",
+	"dependencies": ["Forge"],
+	"dependants": [],
+	"useDependencyInformation": "true"
+}
+]
