@@ -3,6 +3,5 @@
 	<classpathentry kind="src" path="src"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/JavaSE-1.7"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/Minecraft"/>
-	<classpathentry kind="lib" path="C:/Users/Justin/Documents/Tools/mysql-connector-java-5.1.27/mysql-connector-java-5.1.27-bin.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
