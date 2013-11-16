@@ -4,6 +4,7 @@ import java.util.Set;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.management.ServerConfigurationManager;
 
+import com.synaptic.sync.db.DatabaseWrapper;
 import com.synaptic.sync.forge.ForgeWrapper;
 import com.synaptic.sync.forge.PlayerOnlineStatusTracker;
 
@@ -32,6 +33,7 @@ public class SynapticSync {
 
 	private void updateWhiteList(){
 		Set<String> whitelist = ForgeWrapper.getWhiteListedPlayers();
+		DatabaseWrapper.updateWhiteList(whitelist);
 	}
 	
 	private void submitServerInfo() {
