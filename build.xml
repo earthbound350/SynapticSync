@@ -68,11 +68,12 @@
 	</target>
 
 	<target name="push to server" depends="package jar">
+		<property name="target.jar" value="${build.mod.name.compact}-${version.compact}build${build.number}.jar" />
 		<input addproperty="user" message="Enter User: " />
 		<input addproperty="password" message="Enter Password: " />
 		<sshexec host="98.203.179.236" username="${user}" password="${password}" trust="true" 
-			command="service minecraft stop test_server; rm -f ~/minecraft_server/live_server/mods/SynapticSync*.jar; service minecraft start test_server" />
-		<scp file="${eclipse.workspace_loc}/build-archive/${build.mod.name.compact}/${target.jar}" todir="mgmt@98.203.179.236:~/minecraft_server/live_server/mods/" trust="true" password="${password}" />
+			command="service minecraft stop test_server; rm -f ~/minecraft_server/test_server/mods/SynapticSync*.jar; service minecraft start test_server" />
+		<scp file="${eclipse.workspace_loc}/build-archive/${build.mod.name.compact}/${target.jar}" todir="mgmt@98.203.179.236:~/minecraft_server/test_server/mods/" trust="true" password="${password}" />
 	</target>
 
 	<target name="deploy">

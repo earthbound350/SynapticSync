@@ -13,7 +13,7 @@ public class DatabaseWrapper {
 
 	private static Connection con;
 
-	public static void connect() {
+	private static void connect() {
 		String url = "jdbc:mysql://localhost:3306/Minecraft";
 		String user = "synapticserver";
 		String password = "";
@@ -33,75 +33,79 @@ public class DatabaseWrapper {
 		}
 	}
 
-	public static void disconnect() {
+	private static void disconnect() {
 		try {
 			con.close();
 		} catch (SQLException ex) {
 			FMLLog.severe("%s", ex.getMessage());
 		}
 	}
-
-	public static void submitMods(Map<String, String> mods) {
-		for (String key : mods.keySet()) {
-			if (con != null) {
-				try {
-					Statement stmt = con.createStatement();
-					stmt.execute("INSERT INTO mod(mod_id, name) VALUES (\""
-							+ key + "\",\"" + mods.get(key)
-							+ "\") ON DUPLICATE KEY UPDATE name = VALUES(name)");
-				} catch (SQLException e) {
-					FMLLog.severe("%s", e.getMessage());
-				}
-			}
-		}
-	}
-
-	public static void submitVersions(Map<String, String> versions) {
-		for (String key : versions.keySet()) {
-			if (con != null) {
-				try {
-					Statement stmt = con.createStatement();
-					stmt.execute("INSERT INTO version(mod_id, version) VALUES (\""
-							+ key
-							+ "\","
-							+ versions.get(key)
-							+ "\") ON DUPLICATE KEY UPDATE version = VALUES(version)");
-				} catch (SQLException e) {
-					FMLLog.severe("%s", e.getMessage());
-				}
-			}
-		}
-	}
-
-	public static void updateServerVersions(Map<String, String> versions) {
-		String clearServerVersions = "DELETE FROM server_versions";
-		String selectTemplate = "SELECT id from version WHERE version.mod_id = %s AND version.version = %s";
-		String insertTemplate = "INSERT INTO server_versions(version_id) VALUES %s ON DUPLICATE KEY UPDATE version_id = VALUES(version_id)";
+	
+	//Simple operations (Like playerLoggedIn/playerLoggedOut) don't need to be handled here for now. 
+	// Will eventually integrate them for simplicity.
+	// crudOP(s) will be generated in the "API" call (submitMods), then passed here for queue'd execution.
+	// Perhaps have a thread exclusively for execution?
+	// Try to avoid Selects? Shouldn't need to be bidirectional information exchange - the database SHOULD just
+	// represent the server, so that any number of users can view the information without directly polling
+	// the minecraft instance
+	private static void queueDatabaseTransaction(/* DatabaseOperation crudOP */){
+		connect();
 		try {
 			Statement stmt = con.createStatement();
-			stmt.execute(clearServerVersions);
-			for (String mod_id : versions.keySet()) {
-				ResultSet result = stmt.executeQuery(String.format(
-						selectTemplate, mod_id, versions.get(mod_id)));
-				if (result.next()) {
-					stmt.execute(String.format(insertTemplate,
-							result.getString("id")));
-				}
-			}
+			//Pass stmt to particular operation to handle
 		} catch (SQLException e) {
 			FMLLog.severe("%s", e.getMessage());
 		}
+		finally{
+			disconnect();
+		}
+	}
+
+	public static void submitMods(Map<String, String> mods) {
+		
+	}
+
+	public static void submitVersions(Map<String, String> versions) {
+		
+	}
+
+	public static void updateServerVersions(Map<String, String> versions) {
+		//Keep internal cache of server versions? Or perhaps have a
+		// stored proc which handles parsing server versions. 
+		//Generate Insert statement
+		//queueDatabaseTransaction();
 	}
 	
-	public static void userLoggedIn(String userName){
+	public static void playerLoggedIn(String userName){
+		connect();
 		try {
 			Statement stmt = con.createStatement();
-			ResultSet userResult= stmt.executeQuery("SELECT id FROM user WHERE username = " + userName);
+			ResultSet userResult= stmt.executeQuery("SELECT id FROM user WHERE username = \"" + userName + "\"");
 			if(userResult.next()){
 				stmt.execute("INSERT INTO online(user_id) VALUES (" + userResult.getInt("id") + ")");
 			}
 		} catch (SQLException e) {
 			FMLLog.severe("%s", e.getMessage());
 		}
+		finally{
+			disconnect();
+		}
 	}
+	
+	public static void playerLoggedOut(String userName){
+		connect();
+		try {
+			Statement stmt = con.createStatement();
+			ResultSet userResult= stmt.executeQuery("SELECT id FROM user WHERE username = \"" + userName + "\"");
+			if(userResult.next()){
+				stmt.execute("DELETE from online WHERE user_id = " + userResult.getInt("id"));
+			}
+		} catch (SQLException e) {
+			FMLLog.severe("%s", e.getMessage());
+		}
+		finally{
+			disconnect();
+		}
+	}
+
 }

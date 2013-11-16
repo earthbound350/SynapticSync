@@ -1,5 +1,9 @@
 package com.synaptic.sync.core;
-import com.synaptic.sync.db.DatabaseWrapper;
+import java.util.Set;
+
+import net.minecraft.server.MinecraftServer;
+import net.minecraft.server.management.ServerConfigurationManager;
+
 import com.synaptic.sync.forge.ForgeWrapper;
 import com.synaptic.sync.forge.PlayerOnlineStatusTracker;
 
@@ -26,10 +30,12 @@ public class SynapticSync {
 		submitServerInfo();
 	}
 
+	private void updateWhiteList(){
+		Set<String> whitelist = ForgeWrapper.getWhiteListedPlayers();
+	}
+	
 	private void submitServerInfo() {
-		//DatabaseWrapper.connect();
 		//DatabaseWrapper.submitMods(ForgeWrapper.getModNames());
 		//DatabaseWrapper.submitVersions(ForgeWrapper.getModVersions());
-		//DatabaseWrapper.disconnect();
 	}
 }
