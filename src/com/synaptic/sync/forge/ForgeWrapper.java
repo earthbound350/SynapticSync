@@ -6,6 +6,7 @@ import java.util.Set;
 
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.management.ServerConfigurationManager;
+import cpw.mods.fml.common.FMLLog;
 import cpw.mods.fml.common.Loader;
 import cpw.mods.fml.common.ModContainer;
 import cpw.mods.fml.common.versioning.ArtifactVersion;
@@ -39,7 +40,8 @@ public class ForgeWrapper {
 	}
 	
 	public static Set<String> getWhiteListedPlayers(){
-		ServerConfigurationManager scm = MinecraftServer.getServerConfigurationManager(MinecraftServer.getServer());
-		return scm.getWhiteListedPlayers();
+		ServerConfigurationManager scm = MinecraftServer.getServer().getServerConfigurationManager(MinecraftServer.getServer());
+		// TODO: Figure out why this is failing. Seems to be running too early?
+		return null;
 	}
 }
