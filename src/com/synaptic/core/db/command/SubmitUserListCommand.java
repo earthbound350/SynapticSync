@@ -15,7 +15,7 @@ public class SubmitUserListCommand extends Command {
 	protected String getCommandTemplate() {
 		return "DELETE FROM online; DELETE FROM user; INSERT INTO user(username) VALUES %s";
 	}
-
+	
 	@Override
 	public void execute() {
 		// TODO Auto-generated method stub
