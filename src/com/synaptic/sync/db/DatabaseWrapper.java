@@ -8,6 +8,8 @@ import java.sql.Statement;
 import java.util.Map;
 import java.util.Set;
 
+import com.synaptic.core.db.command.SubmitUserListCommand;
+
 import cpw.mods.fml.common.FMLLog;
 
 public class DatabaseWrapper {
@@ -50,16 +52,16 @@ public class DatabaseWrapper {
 	// represent the server, so that any number of users can view the information without directly polling
 	// the minecraft instance
 	private static void queueDatabaseTransaction(/* DatabaseOperation crudOP */){
-		connect();
-		try {
-			Statement stmt = con.createStatement();
-			//Pass stmt to particular operation to handle
-		} catch (SQLException e) {
-			FMLLog.severe("%s", e.getMessage());
-		}
-		finally{
-			disconnect();
-		}
+//		connect();
+//		try {
+//			Statement stmt = con.createStatement();
+//			//Pass stmt to particular operation to handle
+//		} catch (SQLException e) {
+//			FMLLog.severe("%s", e.getMessage());
+//		}
+//		finally{
+//			disconnect();
+//		}
 	}
 
 	public static void submitMods(Map<String, String> mods) {
@@ -109,8 +111,10 @@ public class DatabaseWrapper {
 		}
 	}
 	
-	public static void updateWhiteList(Set<String> whitelist){
-		
+	public static void submitUserList(Set<String> whitelist){
+//		SubmitUserListCommand cmd = new SubmitUserListCommand();
+//		cmd.setArgs(whitelist);
+//		cmd.execute(null);
 	}
 
 }

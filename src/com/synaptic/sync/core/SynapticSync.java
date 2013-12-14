@@ -30,14 +30,10 @@ public class SynapticSync {
 	public void postInit(FMLPostInitializationEvent event) {
 		submitServerInfo();
 	}
-
-	private void updateWhiteList(){
-		Set<String> whitelist = ForgeWrapper.getWhiteListedPlayers();
-		DatabaseWrapper.updateWhiteList(whitelist);
-	}
 	
 	private void submitServerInfo() {
 		//DatabaseWrapper.submitMods(ForgeWrapper.getModNames());
 		//DatabaseWrapper.submitVersions(ForgeWrapper.getModVersions());
+		DatabaseWrapper.submitUserList(ForgeWrapper.getWhiteListedPlayers());
 	}
 }

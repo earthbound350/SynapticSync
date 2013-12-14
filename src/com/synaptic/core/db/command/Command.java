@@ -1,14 +1,17 @@
 package com.synaptic.core.db.command;
 
+import java.sql.Connection;
+
+import cpw.mods.fml.common.FMLLog;
+
 public abstract class Command {
 	
 	protected String command;
 	
-	public abstract void execute();
-	
-	public void setArgs(Object...args){
-		command = String.format(getCommandTemplate(), args);
+	public void execute(Connection con){
+		FMLLog.info("---------------%s---------------", command);
 	}
-	
+	public abstract void setArgs(Object...args);
 	protected abstract String getCommandTemplate();
+	public abstract void execute();
 }
