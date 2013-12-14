@@ -1,7 +1,7 @@
 package com.synaptic.core.db.command;
 
 
-public class SubmitMods extends Command {
+public class SubmitModsCommand extends Command {
 
 	@Override
 	public void execute() {
@@ -11,8 +11,7 @@ public class SubmitMods extends Command {
 
 	@Override
 	protected String getCommandTemplate() {
-		// TODO Auto-generated method stub
-		return null;
+		return "INSERT ";
 	}
 
 }
